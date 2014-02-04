@@ -7,7 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VideoEditVC">
             <connections>
+                <outlet property="convert" destination="cgZ-Ma-qzq" id="cbm-sb-NIR"/>
                 <outlet property="imageView" destination="z0A-0j-2AW" id="mOh-Mb-W8d"/>
+                <outlet property="play" destination="Cwm-21-Y4a" id="66g-5G-mDd"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -20,6 +22,28 @@
                     <rect key="frame" x="0.0" y="233" width="320" height="240"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cgZ-Ma-qzq">
+                    <rect key="frame" x="93" y="75" width="136" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                    <state key="normal" title="Convert">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="convertToVideo" destination="-1" eventType="touchUpInside" id="K00-KV-PLx"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Cwm-21-Y4a">
+                    <rect key="frame" x="115" y="153" width="92" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                    <state key="normal" title="Play">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="playGeneratedVideo:" destination="-1" eventType="touchUpInside" id="rOO-RB-bg7"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="0.80784313730000001" green="0.92941176469999998" blue="0.68235294120000001" alpha="1" colorSpace="calibratedRGB"/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
