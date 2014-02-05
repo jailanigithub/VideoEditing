@@ -16,6 +16,7 @@
 @property(nonatomic, strong) NSMutableArray *savedImageArray;
 @property(nonatomic, strong) NSOperationQueue *imageWritingQueue;
 @property(nonatomic, strong) AVAssetWriter *videoWriter;
+@property(nonatomic, strong) AVAudioPlayer *audioPlayer;
 @end
 
 @implementation VideoEditVC
@@ -94,7 +95,81 @@
     [self presentViewController:mpVC animated:YES completion:^{
         NSLog(@"MPMoview player has presented %@", url);
     }];
+}
+
+-(void)playExtractedAudio{
     
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    NSString *dstPath = [documentsDirectory stringByAppendingString:@"/sample_audio.m4a"];
+    NSURL *dstURL = [NSURL fileURLWithPath:dstPath];
+
+    NSLog(@"dstURL %@", dstURL);
+    NSError *error;
+     self.audioPlayer = [[AVAudioPlayer alloc]
+                    initWithContentsOfURL:dstURL
+                    error:&error];
+    if (error)
+    {
+        NSLog(@"Error in audioPlayer: %@",
+              [error localizedDescription]);
+    } else {
+        self.audioPlayer.delegate = self;
+        [self.audioPlayer play];
+    }
+}
+
+-(void)extractAudioFromVideo{
+    
+    //Create a audia composition and add audio track
+    AVMutableComposition *newAudioAsset = [AVMutableComposition composition];
+    AVMutableCompositionTrack *dstCompositionTrack = [newAudioAsset addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+   //Get video asset from which the audio should be extracted
+    NSURL *url      = [[NSBundle mainBundle] URLForResource:@"sample_iPod" withExtension:@"m4v"];
+    AVAsset *srcAsset  = [AVAsset assetWithURL:url];
+    
+    NSArray *trackArray = [srcAsset tracksWithMediaType:AVMediaTypeAudio];
+    if(!trackArray.count){
+        NSLog(@"Track returns empty array for mediatype AVMediaTypeAudio");
+        return;
+    }
+        
+    AVAssetTrack *srcAssetTrack = [trackArray  objectAtIndex:0];
+
+    //Extract time range
+    CMTimeRange timeRange = srcAssetTrack.timeRange;
+    
+    //Insert audio from the video to mutable avcomposition track
+    NSError *err = nil;
+    if(NO == [dstCompositionTrack insertTimeRange:timeRange ofTrack:srcAssetTrack atTime:kCMTimeZero error:&err]){
+        NSLog(@"Failed to insert audio from the video to mutable avcomposition track");
+        return;
+    }
+    
+    //Export the avcompostion track to destination path
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    NSString *dstPath = [documentsDirectory stringByAppendingString:@"/sample_audio.m4a"];
+    NSURL *dstURL = [NSURL fileURLWithPath:dstPath];
+    
+    
+    //Remove if any file already exists
+    [[NSFileManager defaultManager] removeItemAtURL:dstURL error:nil];
+    
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]initWithAsset:newAudioAsset presetName:AVAssetExportPresetPassthrough];
+    NSLog(@"support file types= %@", [exportSession supportedFileTypes]);
+    exportSession.outputFileType = @"com.apple.m4a-audio";
+    exportSession.outputURL = dstURL;
+    
+    [exportSession exportAsynchronouslyWithCompletionHandler:^{
+        AVAssetExportSessionStatus status = exportSession.status;
+        
+        if(AVAssetExportSessionStatusCompleted != status){
+            NSLog(@"Export status not yet completed. Error: %@", exportSession.error.description);
+        }else if(AVAssetExportSessionStatusCompleted == status){
+            NSLog(@"Successfully audio has been extracted");
+            [self playExtractedAudio];
+        }
+    }];
 }
 
 -(void)generateImageAtSpecifiedTime{
@@ -289,7 +364,8 @@
 //[generator generateCGImagesAsynchronouslyForTimes:times completionHandler:handler];
 
 -(IBAction)playGeneratedVideo:(id)sender{
-    [self playVideo];
+//    [self playVideo];
+    [self extractAudioFromVideo];
 }
 
 
@@ -418,7 +494,7 @@
 
     //Hide convert button initially
     [self.convert setHidden:YES];
-    [self generateListOfImage];
+//    [self generateListOfImage];
 
 }
 
