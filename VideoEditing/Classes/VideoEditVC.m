@@ -74,7 +74,8 @@
     
     NSString *documentsDirectory = [NSHomeDirectory()
                                     stringByAppendingPathComponent:@"Documents"];
-    NSString *videoOutputPath = [documentsDirectory stringByAppendingPathComponent:@"test_output.mov"];
+//    @"test_output.mov"  test_output_audio.mp4
+    NSString *videoOutputPath = [documentsDirectory stringByAppendingPathComponent:@"test_output_audio.mp4"];
     NSURL *url = [NSURL fileURLWithPath:videoOutputPath];
   
     if (![[NSFileManager defaultManager] fileExistsAtPath:videoOutputPath]) {
@@ -150,7 +151,7 @@
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     NSString *dstPath = [documentsDirectory stringByAppendingString:@"/sample_audio.m4a"];
     NSURL *dstURL = [NSURL fileURLWithPath:dstPath];
-    
+    NSLog(@"Audio stored path: %@", dstURL);
     
     //Remove if any file already exists
     [[NSFileManager defaultManager] removeItemAtURL:dstURL error:nil];
@@ -167,9 +168,70 @@
             NSLog(@"Export status not yet completed. Error: %@", exportSession.error.description);
         }else if(AVAssetExportSessionStatusCompleted == status){
             NSLog(@"Successfully audio has been extracted");
-            [self playExtractedAudio];
+//            [self playExtractedAudio];
+            [self mixAudioWithGeneratedVideo];
         }
     }];
+}
+
+-(void)mixAudioWithGeneratedVideo{
+    
+    //1. Get audio and video assets
+    NSString *docDir    = [self getDocumentDirectory];
+    NSString *audioPath = [docDir stringByAppendingPathComponent:@"sample_audio.m4a"];
+    AVAsset *audioAsset = [AVAsset assetWithURL:[NSURL fileURLWithPath:audioPath]];
+    
+    NSString *videoPath = [docDir stringByAppendingPathComponent:@"test_output.mov"];
+    AVAsset *videoAsset = [AVAsset assetWithURL:[NSURL fileURLWithPath:videoPath]];
+
+    NSLog(@"Audio Path %@", audioPath);
+    NSLog(@"Video Path %@", videoPath);
+    
+    //2. Create AVMutableComposion
+    AVMutableComposition *composition = [AVMutableComposition composition];
+    
+    //3. Create AVMutableCompositionTrack from AVAssetAudioComposion for AUDIO
+    AVMutableCompositionTrack *audioCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    //5. Insert the Audio in desired time range
+    NSError *err = nil;
+    [audioCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:&err];
+    
+    //6. Create AVMutableCompostionTrack for VIDEO
+    AVMutableCompositionTrack *videoCompositionTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    //7.Insert the video in desired time range
+    [videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:&err];
+    
+    //8. Create an AVAssetExportSession
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]initWithAsset:composition presetName:AVAssetExportPresetPassthrough];
+    
+    //6. Specifiy the output path and the output format
+    exportSession.outputFileType = @"public.mpeg-4";
+    NSString *exportUrl = [docDir stringByAppendingPathComponent:@"test_output_audio.mp4"];
+    
+    
+    exportSession.outputURL = [NSURL fileURLWithPath:exportUrl];
+    NSLog(@"Export URL %@", exportUrl);
+    
+    //7. Remove if item already exists at path
+    if(![self removeFileIfAlreadyExists:exportUrl]){
+        NSLog(@"Unable to export mixed audio and video file at path: %@", exportUrl);
+        return;
+    }
+    //8. Export the video asynchronously
+    [exportSession exportAsynchronouslyWithCompletionHandler:^{
+
+        AVAssetExportSessionStatus status = exportSession.status;
+        
+        if(AVAssetExportSessionStatusCompleted != status){
+            NSLog(@"Mixing Export status not yet completed. Error: %@", exportSession.error.description);
+        }else if(AVAssetExportSessionStatusCompleted == status){
+            NSLog(@"Successfully video and audio have been Mixed");
+            [self playVideo];
+        }
+    }];
+    
 }
 
 -(void)generateImageAtSpecifiedTime{
@@ -210,6 +272,12 @@
     }else{
         NSLog(@"Failed to generate image");
     }
+}
+
+-(NSString*)getDocumentDirectory{
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return documentsDirectory;
 }
 
 -(void)generateListOfImage{
@@ -368,7 +436,6 @@
     [self extractAudioFromVideo];
 }
 
-
 -(IBAction) convertToVideo
 {
     NSLog(@"Touch up inside called");
@@ -391,6 +458,20 @@
     [self writeImagesAsMovie:self.savedImageArray toPath:videoOutputPath];
 }
 
+-(BOOL)removeFileIfAlreadyExists:(NSString*)fileName{
+    // get rid of existing mp4 if exists...
+    NSError *error = nil;
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    if ([fileMgr fileExistsAtPath:fileName]){
+        if([fileMgr removeItemAtPath:fileName error:&error] != YES){
+
+            NSLog(@"Unable to delete file at path: %@ \nErrro: %@", fileName, [error localizedDescription]);
+            return NO;
+        }
+    }
+    return YES;
+}
 
 //Here i'm passing the imageArray and savedVideoPath to the function below
 /*
@@ -494,7 +575,7 @@
 
     //Hide convert button initially
     [self.convert setHidden:YES];
-//    [self generateListOfImage];
+    [self generateListOfImage];
 
 }
 
@@ -607,7 +688,7 @@
         {
             
             i++;
-            NSLog(@"inside for loop %d %@ ",i, filename);
+//            NSLog(@"inside for loop %d %@ ",i, filename);
             CMTime frameTime = CMTimeMake(1, fps);
             CMTime lastTime=CMTimeMake(i, fps);
             CMTime presentTime=CMTimeAdd(lastTime, frameTime);
@@ -645,7 +726,9 @@
     [writerInput markAsFinished];
     [self.videoWriter finishWritingWithCompletionHandler:^{
         NSLog(@"Video writting has been done");
-        [self playVideo];
+//        [self playVideo];
+//        [self mixAudioWithGeneratedVideo];
+        [self extractAudioFromVideo];
     }];
     CVPixelBufferPoolRelease(adaptor.pixelBufferPool);
 }
