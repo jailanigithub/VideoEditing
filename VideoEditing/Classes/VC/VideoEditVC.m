@@ -9,6 +9,7 @@
 #import "VideoEditVC.h"
 #import <MediaPlayer/MPMoviePlayerController.h>
 #import <MediaPlayer/MPMoviePlayerViewController.h>
+#import "VideoEditingModel.h"
 
 @interface VideoEditVC ()
 @property(nonatomic, weak) IBOutlet UIImageView *imageView;
@@ -17,6 +18,7 @@
 @property(nonatomic, strong) NSOperationQueue *imageWritingQueue;
 @property(nonatomic, strong) AVAssetWriter *videoWriter;
 @property(nonatomic, strong) AVAudioPlayer *audioPlayer;
+@property(nonatomic, strong) VideoEditingModel *videoEditModel;
 @end
 
 @implementation VideoEditVC
@@ -28,6 +30,14 @@
         // Custom initialization
     }
     return self;
+}
+
+-(VideoEditingModel*)videoEditModel{
+    
+    if(!_videoEditModel)
+        _videoEditModel = [[VideoEditingModel alloc] init];
+    
+    return _videoEditModel;
 }
 
 -(NSOperationQueue*)imageWritingQueue{
@@ -284,18 +294,17 @@
     
     //Create image Image Generator
     AVAsset *asset = [self getVideoAsset];
-    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:asset];
     
     //Create AVVideoComposition
     AVVideoComposition *videoComposition = [AVVideoComposition videoCompositionWithPropertiesOfAsset:asset];
     
-    //Retrive video properties
+    //Retrive video's properties
     NSTimeInterval duration         = CMTimeGetSeconds(asset.duration);
     NSTimeInterval frameDuration    = CMTimeGetSeconds(videoComposition.frameDuration);
     CGSize renderSize = videoComposition.renderSize;
     CGFloat totalFrames = round(duration/frameDuration);
     
-    //Create an array to store all time values at which the images to be captured from the video
+    //Create an array to store all time values at which the images captured from the video
     NSMutableArray *times = [NSMutableArray arrayWithCapacity:totalFrames];
     NSLog(@"Total Number of frames %d", (int)totalFrames);
     for (int i = 0; i < totalFrames/6; i++) {
@@ -305,6 +314,7 @@
     }
     
     // Launching the process...
+    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:asset];
     imageGenerator.requestedTimeToleranceBefore = kCMTimeZero;
     imageGenerator.requestedTimeToleranceAfter = kCMTimeZero;
     imageGenerator.maximumSize = renderSize;
@@ -313,11 +323,10 @@
         __block unsigned int i = 0;
         AVAssetImageGeneratorCompletionHandler handler = ^(CMTime requestedTime, CGImageRef im, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error){
             i++;
+            
             CGImageRetain(im);
             if(result == AVAssetImageGeneratorSucceeded){
                 
-                //Create a weak self
-//                UIImage *image = [UIImage imageWithCGImage:im];
                     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
                     
                     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
@@ -326,16 +335,16 @@
                     NSString *videoOutputPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"VideoFrames%i.png", i]];
                     
                     UIImage *image = [UIImage imageWithCGImage:im];
-                    if(![UIImagePNGRepresentation(image) writeToFile:videoOutputPath options:NSDataWritingFileProtectionNone error:&error])
-                        NSLog(@"Failed to save image at path %@", videoOutputPath);
-                    else
-                        [self.savedImageArray addObject:[NSString stringWithFormat:@"VideoFrames%i.png", i]];
-//                        NSLog(@"%ith Image has been written successfully at %@", i, videoOutputPath);
-//                    
+                        if(![UIImagePNGRepresentation(image) writeToFile:videoOutputPath options:NSDataWritingFileProtectionNone error:&error]){
+                            NSLog(@"Failed to save image at path %@", videoOutputPath);
+                            i--;
+                        }
+                        else
+                            [self.savedImageArray addObject:[NSString stringWithFormat:@"VideoFrames%i.png", i]];
                     CGImageRelease(im);
-                    
                 }];
                 [self.imageWritingQueue addOperation:operation];
+            
             }else if (result == AVAssetImageGeneratorFailed){
                 NSLog(@"Failed:     Image %d is failed to generate", i);
                 NSLog(@"Error: %@", [error localizedDescription]);
@@ -453,7 +462,6 @@
         if([fileMgr removeItemAtPath:videoOutputPath error:&error] != YES)
             NSLog(@"Unable to delete file: %@", [error localizedDescription]);
     }
-//    [self writeImageAsMovie:self.savedImageArray toPath:videoOutputPath size:self.view.frame.size duration:30];
 
     [self writeImagesAsMovie:self.savedImageArray toPath:videoOutputPath];
 }
@@ -575,7 +583,17 @@
 
     //Hide convert button initially
     [self.convert setHidden:YES];
-    [self generateListOfImage];
+//    [self generateListOfImage];
+
+    NSURL *url       = [[NSBundle mainBundle] URLForResource:@"sample_iPod" withExtension:@"m4v"];
+    NSString *docDir = [self getDocumentDirectory];
+    
+    [self.videoEditModel generateFramesFromVideoAtPath:url pathToSaveTheImages:docDir completionHandler:^(BOOL isSuccess, int percentOfCompletion, NSArray *savedImagesPathArray, NSError *err) {
+        if(isSuccess)
+            NSLog(@"Completed Percentage: %d\n Completed image %d", percentOfCompletion, savedImagesPathArray.count);
+        else
+            NSLog(@"Failed");
+    }];
 
 }
 

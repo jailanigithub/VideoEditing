@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24070AD718A39F5800D0B87E /* VideoEditVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 24070AD218A39F5800D0B87E /* VideoEditVC.m */; };
+		24070AD818A39F5800D0B87E /* VideoEditVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 24070AD318A39F5800D0B87E /* VideoEditVC.xib */; };
+		24070AD918A39F5800D0B87E /* VideoEditingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 24070AD618A39F5800D0B87E /* VideoEditingModel.m */; };
 		241BD4AD189B66810068CBF9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241BD4AC189B66810068CBF9 /* Foundation.framework */; };
 		241BD4AF189B66810068CBF9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241BD4AE189B66810068CBF9 /* CoreGraphics.framework */; };
 		241BD4B1189B66820068CBF9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241BD4B0189B66810068CBF9 /* UIKit.framework */; };
@@ -19,8 +22,6 @@
 		241BD4C8189B66820068CBF9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241BD4B0189B66810068CBF9 /* UIKit.framework */; };
 		241BD4D0189B66820068CBF9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 241BD4CE189B66820068CBF9 /* InfoPlist.strings */; };
 		241BD4D2189B66820068CBF9 /* VideoEditingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 241BD4D1189B66820068CBF9 /* VideoEditingTests.m */; };
-		241BD4E4189B67410068CBF9 /* VideoEditVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 241BD4E2189B67410068CBF9 /* VideoEditVC.m */; };
-		241BD4E5189B67410068CBF9 /* VideoEditVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 241BD4E3189B67410068CBF9 /* VideoEditVC.xib */; };
 		241BD4E7189B69F80068CBF9 /* sample_iPod.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 241BD4E6189B69F80068CBF9 /* sample_iPod.m4v */; };
 		241BD4E9189B6EB80068CBF9 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241BD4E8189B6EB80068CBF9 /* MediaPlayer.framework */; };
 /* End PBXBuildFile section */
@@ -36,6 +37,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		24070AD118A39F5800D0B87E /* VideoEditVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEditVC.h; sourceTree = "<group>"; };
+		24070AD218A39F5800D0B87E /* VideoEditVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoEditVC.m; sourceTree = "<group>"; };
+		24070AD318A39F5800D0B87E /* VideoEditVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoEditVC.xib; sourceTree = "<group>"; };
+		24070AD518A39F5800D0B87E /* VideoEditingModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEditingModel.h; sourceTree = "<group>"; };
+		24070AD618A39F5800D0B87E /* VideoEditingModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoEditingModel.m; sourceTree = "<group>"; };
 		241BD4A9189B66810068CBF9 /* VideoEditing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoEditing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		241BD4AC189B66810068CBF9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		241BD4AE189B66810068CBF9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -52,9 +58,6 @@
 		241BD4CD189B66820068CBF9 /* VideoEditingTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VideoEditingTests-Info.plist"; sourceTree = "<group>"; };
 		241BD4CF189B66820068CBF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		241BD4D1189B66820068CBF9 /* VideoEditingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoEditingTests.m; sourceTree = "<group>"; };
-		241BD4E1189B67410068CBF9 /* VideoEditVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEditVC.h; sourceTree = "<group>"; };
-		241BD4E2189B67410068CBF9 /* VideoEditVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoEditVC.m; sourceTree = "<group>"; };
-		241BD4E3189B67410068CBF9 /* VideoEditVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoEditVC.xib; sourceTree = "<group>"; };
 		241BD4E6189B69F80068CBF9 /* sample_iPod.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample_iPod.m4v; sourceTree = "<group>"; };
 		241BD4E8189B6EB80068CBF9 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -84,6 +87,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		24070AD018A39F5800D0B87E /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				24070AD118A39F5800D0B87E /* VideoEditVC.h */,
+				24070AD218A39F5800D0B87E /* VideoEditVC.m */,
+				24070AD318A39F5800D0B87E /* VideoEditVC.xib */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		24070AD418A39F5800D0B87E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				24070AD518A39F5800D0B87E /* VideoEditingModel.h */,
+				24070AD618A39F5800D0B87E /* VideoEditingModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		241BD4A0189B66810068CBF9 = {
 			isa = PBXGroup;
 			children = (
@@ -160,9 +182,8 @@
 		241BD4E0189B67410068CBF9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				241BD4E1189B67410068CBF9 /* VideoEditVC.h */,
-				241BD4E2189B67410068CBF9 /* VideoEditVC.m */,
-				241BD4E3189B67410068CBF9 /* VideoEditVC.xib */,
+				24070AD018A39F5800D0B87E /* VC */,
+				24070AD418A39F5800D0B87E /* Model */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -242,9 +263,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				241BD4E5189B67410068CBF9 /* VideoEditVC.xib in Resources */,
 				241BD4E7189B69F80068CBF9 /* sample_iPod.m4v in Resources */,
 				241BD4B7189B66820068CBF9 /* InfoPlist.strings in Resources */,
+				24070AD818A39F5800D0B87E /* VideoEditVC.xib in Resources */,
 				241BD4BF189B66820068CBF9 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,7 +287,8 @@
 			files = (
 				241BD4BD189B66820068CBF9 /* AppDelegate.m in Sources */,
 				241BD4B9189B66820068CBF9 /* main.m in Sources */,
-				241BD4E4189B67410068CBF9 /* VideoEditVC.m in Sources */,
+				24070AD918A39F5800D0B87E /* VideoEditingModel.m in Sources */,
+				24070AD718A39F5800D0B87E /* VideoEditVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,6 +493,7 @@
 				241BD4D7189B66820068CBF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		241BD4D8189B66820068CBF9 /* Build configuration list for PBXNativeTarget "VideoEditingTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +502,7 @@
 				241BD4DA189B66820068CBF9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
